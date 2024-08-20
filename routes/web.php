@@ -8,6 +8,7 @@ use App\Http\Controllers\TemperatureMonitoringController;
 use App\Http\Controllers\TemperaturesController;
 use App\Http\Controllers\DeviceControllerX;
 
+
 /*
 
 |--------------------------------------------------------------------------
@@ -33,6 +34,8 @@ use App\Http\Controllers\DeviceControllerX;
 Route::get('/', [PageController::class, 'index'])->name('/');
 Route::resource('temperature-monitor-contacts', TemperatureMonitorContactController::class);
 Route::resource('temperature-monitorings', TemperatureMonitoringController::class);
+Route::get('/temperatures', [TemperatureMonitoringController::class, 'index']);
+Route::get('/temperatures/show', [TemperatureMonitoringController::class, 'show'])->name('temperatures.show');
 // Remove or rename this route
 // Route::get('temperature-monitorings/show', [TemperatureMonitoringController::class, 'show'])->name('temperature-monitorings.show');
 Route::get('/temperature-monitorings', [TemperatureMonitoringController::class, 'index'])->name('temperature-monitorings.index');

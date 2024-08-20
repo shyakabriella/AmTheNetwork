@@ -2,10 +2,11 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Temperature extends Model
+class TemperatureMonitoring extends Model
 {
-    use HasFactory;
+    protected $table = 'temperatures';
+
+    protected $fillable = ['cercius', 'time_int', 'device_id'];
 }

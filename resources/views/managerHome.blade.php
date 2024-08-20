@@ -18,6 +18,10 @@
 <!-- Popper JS -->
 <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
 
+<!-- In your resources/views/layouts/app.blade.php or a specific view file -->
+
+
+
 <!-- Latest compiled JavaScript -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
     <title>Dashboard</title>
@@ -554,18 +558,38 @@ body{
         
      </div>
      <h1>Select Date Range for Temperature Monitoring</h1>
-    <form action="{{ route('temperatures.show') }}"id=""  method="GET">
-        <div>
-            <label style="color:black;" for="start_date">Start Date:</label>
-            <input type="date"  id="start_date" name="start_date" required>
+
+     <!-- Assuming this is inside resources/views/temperatures/index.blade.php -->
+<form id="temperatureForm">
+    <div>
+        <label for="start_date">Start Date:</label>
+        <input type="date" id="start_date" name="start_date" required>
+    </div>
+
+    <div>
+        <label for="end_date">End Date:</label>
+        <input type="date" id="end_date" name="end_date" required>
+    </div>
+    <button type="button" onclick="showTemperatures()">Show Temperatures</button>
+</form>
+
+<!-- Modal -->
+<div class="modal fade" id="temperatureModal" tabindex="-1" role="dialog" aria-labelledby="temperatureModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="temperatureModalLabel">Temperature Data</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <!-- Temperature data will be loaded here -->
+            </div>
         </div>
-   
-        <div>
-            <label style="color:black;" for="end_date">End Date:</label>
-            <input type="date" id="end_date" name="end_date" required>
-        </div>
-        <button type="submit">Show Temperatures</button>
-    </form>
+    </div>
+</div>
+
 
     <hr>
    
@@ -574,29 +598,49 @@ body{
 @elseif ($temperatures->isEmpty())
     <p>No temperature data found for the selected date range.</p>
 @else
-    <table id="monitoringData">
-        <thead>
-            <tr>
-                <th>Start Date</th>
-                <th>End Date</th>
-                <th>Start Temperature</th>
-                <th>Current Temperature</th>
-                <th>Todo Notification</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach ($temperatures as $temperature)
-                <tr>
-                    <td>{{ $temperature->date }}</td>
-                    <td>{{ $temperature->date }}</td>
-                    <td>{{ $temperature->start_temperature }}</td>
-                    <td>{{ $temperature->current_temperature }}</td>
-                    <td><!-- Todo Notification --></td>
-                </tr>
-            @endforeach
-        </tbody>
-    </table>
+<table class="table">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Celsius</th>
+            <th>Time</th>
+            <th>Device ID</th>
+            <th>Created At</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach ($temperatures as $temperature)
+        <tr>
+            <td>{{ $temperature->id }}</td>
+            <td>{{ $temperature->cercius }}</td>
+            <td>{{ $temperature->time_int }}</td>
+            <td>{{ $temperature->device_id }}</td>
+            <td>{{ $temperature->created_at }}</td>
+        </tr>
+        @endforeach
+    </tbody>
+</table>
+
     <!-- Pagination Links -->
+
+    <script>
+        function showTemperatures() {
+            var startDate = document.getElementById('start_date').value;
+            var endDate = document.getElementById('end_date').value;
+            
+            // Fetch data using Laravel's route
+            fetch(`/temperatures/show?start_date=${startDate}&end_date=${endDate}`)
+            .then(response => response.text())
+            .then(html => {
+                // Insert fetched HTML into the modal body
+                document.querySelector('#temperatureModal .modal-body').innerHTML = html;
+                // Show the modal
+                $('#temperatureModal').modal('show');
+            })
+            .catch(error => console.error('Error loading the temperatures:', error));
+        }
+</script>
+
  
     <div id="paginationControls">
     <button onclick="changePage(-1)">Previous</button>

@@ -9,9 +9,17 @@ use Illuminate\Support\Facades\Http;
 
 class TemperatureTaskScheduler extends ConsoleKernel
 {
+
+    public function index()
+    {
+        $temperatures = TemperatureMonitoring::all();
+        return view('temperatures.index', compact('temperatures'));
+    }
     /**
      * Define the application's command schedule.
      */
+
+     
 
      
     protected function schedule(Schedule $schedule)
